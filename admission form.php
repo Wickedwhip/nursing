@@ -1,6 +1,45 @@
 <?php
+//include database connection
+include 'dbconnect.php';
 
+//error reporting   
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+//handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect and sanitize form data
+    $childName = htmlspecialchars(trim($_POST['childName']));
+    $childAge = htmlspecialchars(trim($_POST['childAge']));
+    $placeOfBirth = htmlspecialchars(trim($_POST['placeOfBirth']));
+    $gender = htmlspecialchars(trim($_POST['gender']));
+    $nationality = htmlspecialchars(trim($_POST['nationality']));
+    $religion = htmlspecialchars(trim($_POST['religion']));
+    $tribe = htmlspecialchars(trim($_POST['tribe']));
+    $admissionDate = htmlspecialchars(trim($_POST['admissionDate']));
+    $admittedby = htmlspecialchars(trim($_POST['admittedby']));
+    $admissionReason = htmlspecialchars(trim($_POST['admissionReason']));
+    $childcurrentstatus = htmlspecialchars(trim($_POST['childcurrentstatus']));
+    $childBackground = htmlspecialchars(trim($_POST['childBackground']));
+    $familyMemberName = htmlspecialchars(trim($_POST['familyMemberName']));
+    $relationWithChild = htmlspecialchars(trim($_POST['relationWithChild']));
+    $familyContact = htmlspecialchars(trim($_POST['familyContact']));
+    $hasthechildbeenschooledbefore = htmlspecialchars(trim($_POST['hasthechildbeenschooledbefore']));
+    $lastschoolattended = htmlspecialchars(trim($_POST['lastschoolattended']));
+    $class_grade = htmlspecialchars(trim($_POST['class_grade']));
+    $schoolperformance = htmlspecialchars(trim($_POST['schoolperformance']));
+    $learningdisabilities = isset($_POST['learningdisabilities']) ? 'yes' : 'no';
+    $admissionPersonName = htmlspecialchars(trim($_POST['admissionPersonName']));
+    $role = htmlspecialchars(trim($_POST['role']));
+    $admissionPersonContact = htmlspecialchars(trim($_POST['admissionPersonContact']));  
+    $relationshipToChild = htmlspecialchars(trim($_POST['relationshipToChild']));
+    $idnumber = htmlspecialchars(trim($_POST['idnumber']));
+    $officialsName = htmlspecialchars(trim($_POST['officialsName']));
+    $officialsRole = htmlspecialchars(trim($_POST['officialsRole']));
+    $dateFilled = htmlspecialchars(trim($_POST['dateFilled']));
+                                                                                                                               
+    // Add further processing or database insertion here as needed
+}
 ?>
 <!DOCTYPE html>
 <html>
