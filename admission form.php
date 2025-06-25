@@ -11,7 +11,8 @@ ini_set('display_errors', 1);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect and sanitize form data
     $childName = htmlspecialchars(trim($_POST['childName']));
-    $childAge = htmlspecialchars(trim($_POST['childAge']));
+    $childDOB = isset($_POST['childDOB']) && is_numeric($_POST['childDOB']) ? (int)$_POST['childDOB'] : null;
+    $childDOB = htmlspecialchars(trim($_POST['childAge']));
     $placeOfBirth = htmlspecialchars(trim($_POST['placeOfBirth']));
     $gender = htmlspecialchars(trim($_POST['gender']));
     $nationality = htmlspecialchars(trim($_POST['nationality']));
@@ -28,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hasthechildbeenschooledbefore = htmlspecialchars(trim($_POST['hasthechildbeenschooledbefore']));
     $lastschoolattended = htmlspecialchars(trim($_POST['lastschoolattended']));
     $class_grade = htmlspecialchars(trim($_POST['class_grade']));
-    $schoolperformance = htmlspecialchars(trim($_POST['schoolperformance']));
+    $schoolperformance = htmlspecialchars(trim($_POST['schoolperformance'] ?? ''));
     $learningdisabilities = isset($_POST['learningdisabilities']) ? 'yes' : 'no';
     $admissionPersonName = htmlspecialchars(trim($_POST['admissionPersonName']));
     $role = htmlspecialchars(trim($_POST['role']));
@@ -43,16 +44,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                                                                                
     // Add further processing or database insertion here as needed
     // Example: Insert into database
-    $sql = "INSERT INTO admission_form (
-        childName, childAge, placeOfBirth, gender, nationality, religion, tribe, admissionDate, admittedby, admissionReason, childcurrentstatus, childBackground, familyMemberName, relationWithChild, familyContact, hasthechildbeenschooledbefore, lastschoolattended, class_grade, schoolperformance, learningdisabilities, admissionPersonName, role, admissionPersonContact, relationshipToChild, idnumber, officialsName, officialsRole, dateFilled, signature
-    ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-    )";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param(
-        "sssssssssssssssssssssssssssss",
-        $childName, $childAge, $placeOfBirth, $gender, $nationality, $religion, $tribe, $admissionDate, $admittedby, $admissionReason, $childcurrentstatus, $childBackground, $familyMemberName, $relationWithChild, $familyContact, $hasthechildbeenschooledbefore, $lastschoolattended, $class_grade, $schoolperformance, $learningdisabilities, $admissionPersonName, $role, $admissionPersonContact, $relationshipToChild, $idnumber, $officialsName, $officialsRole, $dateFilled, $signature
-    );
+ $sql = "INSERT INTO admission (
+    childName, childDOB, placeOfBirth, gender, nationality, religion, tribe,
+    admissionDate, admittedby, admissionReason, childcurrentstatus, childBackground,
+    familyMemberName, relationWithChild, familyContact, hasthechildbeenschooledbefore,
+    lastschoolattended, class_grade, schoolperformance, learningdisabilities,
+    admissionPersonName, role, admissionPersonContact, relationshipToChild,
+    idnumber, officialsName, officialsRole, dateFilled, signature
+) VALUES (
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+)";
+// Prepare the SQL statement
+
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("Prepare failed: " . $conn->error); // 👈 This will tell you EXACTLY what's wrong
+}
+
+$stmt->bind_param(
+    "sssssssssssssssssssssssssssss", // 29 times
+    $childName, $childDOB, $placeOfBirth, $gender, $nationality, $religion, $tribe,
+    $admissionDate, $admittedby, $admissionReason, $childcurrentstatus, $childBackground,
+    $familyMemberName, $relationWithChild, $familyContact, $hasthechildbeenschooledbefore,
+    $lastschoolattended, $class_grade, $schoolperformance, $learningdisabilities,
+    $admissionPersonName, $role, $admissionPersonContact, $relationshipToChild,
+    $idnumber, $officialsName, $officialsRole, $dateFilled, $signature
+);
+
+
     if ($stmt->execute()) {
         echo "<script>alert('Form submitted successfully!');</script>";
     } else {
