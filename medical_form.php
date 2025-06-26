@@ -1,3 +1,85 @@
+<?php
+//include database connection
+include 'dbconnect.php';
+
+
+//error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+//handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect and sanitize form data
+    $fullname = htmlspecialchars(trim($_POST['fullname']));
+    $dob = htmlspecialchars(trim($_POST['dob']));
+    $gender = htmlspecialchars(trim($_POST['gender']));
+    $admissiondate = htmlspecialchars(trim($_POST['admissiondate']));
+    $guardianname = htmlspecialchars(trim($_POST['guardianname']));
+    $relationship = htmlspecialchars(trim($_POST['relationship']));
+    $guardianphone = htmlspecialchars(trim($_POST['guardianphone']));
+    $emergencycontactperson = htmlspecialchars(trim($_POST['emergencycontactperson']));
+    $emergencycontactphone = htmlspecialchars(trim($_POST['emergencycontactphone']));
+    $medicalhistory = htmlspecialchars(trim($_POST['medicalhistory']));
+    $allergies = htmlspecialchars(trim($_POST['allergies']));
+    $currentmedications = htmlspecialchars(trim($_POST['currentmedications']));
+    $vaccinationstatus = htmlspecialchars(trim($_POST['vaccinationstatus']));
+    $specialneeds = htmlspecialchars(trim($_POST['specialneeds']));
+    $additionalinfo = htmlspecialchars(trim($_POST['additionalinfo']));
+    $immunization = isset($_POST['immunization']) ? implode(", ", $_POST['immunization']) : '';
+    $bcg_date = htmlspecialchars(trim($_POST['bcg_date']));
+    $polio_date = htmlspecialchars(trim($_POST['polio_date']));
+    $dpt_date = htmlspecialchars(trim($_POST['dpt_date']));
+    $hepatitisb_date = htmlspecialchars(trim($_POST['hepatitisb_date']));
+    $measles_date = htmlspecialchars(trim($_POST['measles_date']));
+    $others_specify = htmlspecialchars(trim($_POST['others_specify']));
+    $others_date = htmlspecialchars(trim($_POST['others_date']));
+    $weight = htmlspecialchars(trim($_POST['weight']));
+    $height = htmlspecialchars(trim($_POST['height']));
+    $bloodpressure = htmlspecialchars(trim($_POST['bloodpressure']));
+    $temperature = htmlspecialchars(trim($_POST['temperature']));
+    $observations = htmlspecialchars(trim($_POST['observations']));
+    $nurse_name = htmlspecialchars(trim($_POST['nurse_name']));
+    $nurse_signature = htmlspecialchars(trim($_POST['nurse_signature']));
+    $date = htmlspecialchars(trim($_POST['date']));   
+ 
+    // Prepare SQL statement
+    $sql = "INSERT INTO medical_forms (
+        fullname, dob, gender, admissiondate, guardianname, relationship, guardianphone,
+        emergencycontactperson, emergencycontactphone, medicalhistory, allergies, currentmedications,
+        vaccinationstatus, specialneeds, additionalinfo, immunization, bcg_date, polio_date, dpt_date,
+        hepatitisb_date, measles_date, others_specify, others_date, weight, height, bloodpressure,
+        temperature, observations, nurse_name, nurse_signature, date
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    if (!$conn) {
+        echo "<script>alert('Database connection failed.');</script>";
+        exit;
+    }
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        echo "<script>alert('Statement preparation failed: " . $conn->error . "');</script>";
+        exit;
+    }
+
+    $stmt->bind_param(
+        "sssssssssssssssssssssssssssssss",
+        $fullname, $dob, $gender, $admissiondate, $guardianname, $relationship, $guardianphone,
+        $emergencycontactperson, $emergencycontactphone, $medicalhistory, $allergies, $currentmedications,
+        $vaccinationstatus, $specialneeds, $additionalinfo, $immunization, $bcg_date, $polio_date, $dpt_date,
+        $hepatitisb_date, $measles_date, $others_specify, $others_date, $weight, $height, $bloodpressure,
+        $temperature, $observations, $nurse_name, $nurse_signature, $date
+    );
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Form submitted successfully!');</script>";
+    } else {
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
+    }
+    $stmt->close();
+    $conn->close();
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,53 +123,18 @@
             margin-bottom: 4px;
             color: #015e6b;
         }
-        input[type="text"], input[type="date"], input[type="number"], input[type="tel"], textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 16px;
-            border: 1px solid #b2ebf2;
-            border-radius: 6px;
-            box-sizing: border-box;
-            background: #f7feff;
-        }
-    prompt input[type="text"] {
-        width: 300px; /* Set desired width */
-        height: 40px; /* Set desired height */
-        font-size: 18px; /* Set font size for text inside */
-        padding: 8px; /* Optional: add padding for better appearance */
-    }
-    prompt .nav-links {
-    margin-top: 16px;
-    text-align: center;
-    }
-
-    prompt .nav-links a {
-    color: #0078d4;
-    text-decoration: none;
-    margin: 0 8px;
-    font-size: 16px;
-    }
-
-    prompt .nav-links a:hover {
-    text-decoration: underline;
+    input[type="text"], input[type="date"], input[type="number"], input[type="tel"], textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        border: 1px solid #b2ebf2;
+        border-radius: 6px;
+        box-sizing: border-box;
+        background: #f7feff;
     }
 </style>
-    <!-- ...existing code... -->
-    <prompt>
-    <!-- Your form fields here -->
-    <input type="text" placeholder="Username or Email" />
-    <input type="password" placeholder="Password" />
-    <button type="submit">Login</button>
 
-    <!-- Navigation links below the form fields -->
-    <div class="nav-links">
-        <a href="/register">Register</a>
-        <span> | </span>
-        <a href="/login">Login</a>
-    </div>
-    </prompt>
-<!-- ...existing code... -->
-    <form>
+<form method="POST" action="medical_form.php">
         <section>
             <h1 class="login-title">Child Basic Information</h1>
             <p>Please fill out the form below with your medical information.</p>
@@ -162,23 +209,24 @@
                 <label for="hepatitisb_date">Date of Last Immunized:</label>
                 <input type="date" id="hepatitisb_date" name="hepatitisb_date"><br><br>
 
-                <input type="checkbox" id="measles" name="immunization[]" value="MEASLES">
-                <label for="measles">MEASLES</label>
-                <label for="measles_date">Date of Last Immunized:</label>
-                <input type="date" id="measles_date" name="measles_date"><br><br>
-
-                <input type="checkbox" id="others" name="immunization[]" value="OTHERS">
-                <label for="others">OTHERS (Specify)</label>
-                <textarea id="others_specify" name="others_specify" rows="2" cols="40" placeholder="Specify other immunizations"></textarea>
-                <label for="others_date">Date of Last Immunized:</label>
-                <input type="date" id="others_date" name="others_date"><br><br>
             </div>
+        </section>
         <section>
             <h1 class="login-title">Current Status</h1>
             <p>Please fill out the form below with your current status.</p>
             <p>Ensure all fields are completed accurately.</p>
             <label for="weight">weight</label>
             <input type="number" id="weight" name="weight" required><br><br>
+            <label for="height">height</label>
+            <input type="number" id="height" name="height" required><br><br>
+            <label for="bloodpressure">Blood Pressure</label>
+            <input type="text" id="bloodpressure" name="bloodpressure" required><br><br>
+            <label for="temperature">Temperature</label>
+            <input type="number" id="temperature" name="temperature" required><br><br>
+            <label for="observations">Observations</label>
+            <textarea id="observations" name="observations" rows="4" cols="50" required placeholder="Describe skin condition, appetite, sleep habits, etc."></textarea><br><br>
+
+        </section>  
             <label for="height">height</label>
             <input type="number" id="height" name="height" required><br><br>
             <label for="bloodpressure">Blood Pressure</label>
@@ -197,26 +245,7 @@
             <input type="text" id="nurse_signature" name="nurse_signature" required><br><br>
             <label for="date">Date</label>
             <input type="date" id="date" name="date" required><br><br>
-        <button type="button" style="background-color: rgb(1, 183, 255); color: rgb(5, 5, 5);" onclick="
-            const form = this.form;
-            let valid = true;
-            // Check all required inputs and textareas
-            Array.from(form.querySelectorAll('input[required], textarea[required]')).forEach(function(input) {
-                if (!input.value.trim()) {
-                    valid = false;
-                }
-            });
-            // Check required radio groups
-            const genderRadios = form.querySelectorAll('input[name=gender][required]');
-            if (genderRadios.length && !Array.from(genderRadios).some(r => r.checked)) {
-                valid = false;
-            }
-            if (valid) {
-                alert('Submission successful');
-            } else {
-                alert('Fill out the required info');
-            }
-        ">submit</button> 
+        <button type="submit" style="background-color: rgb(1, 183, 255); color: rgb(5, 5, 5);">submit</button>
         </section>  
     </form>
 </body>
