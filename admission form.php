@@ -5,7 +5,7 @@ include 'dbconnect.php';
 
 //error reporting   
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // Set to 1 to display errors, 0 to hide them
 
 //handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
